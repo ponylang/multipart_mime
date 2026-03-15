@@ -1,0 +1,12 @@
+{
+  "packages": ["multipart_mime"],
+  "info": {
+    "name": "multipart_mime",
+    "version": "0.0.0",
+    "description": "Multipart MIME parsing for Pony",
+    "homepage": "https://github.com/ponylang/multipart_mime",
+    "license": "BSD-2-Clause",
+    "documentation_url": "https://ponylang.github.io/multipart_mime/"
+  },
+  "deps": []
+}

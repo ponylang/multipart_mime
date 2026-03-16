@@ -1,15 +1,16 @@
 primitive InvalidBoundary
   """
   The boundary string is invalid per RFC 2046: empty, longer than 70
-  characters, or contains a character outside the allowed set.
+  characters, ends with a space, or contains a character outside the
+  allowed set.
   """
   fun string(): String iso^ => "invalid boundary".clone()
 
 primitive MalformedHeader
   """
-  A part header line is syntactically invalid — missing the colon
-  separator or uses obsolete folding (line starting with linear
-  whitespace).
+  A part header line does not conform to RFC 7230 header field syntax:
+  missing the colon separator, has whitespace before the colon, or uses
+  obsolete folding (line starting with linear whitespace).
   """
   fun string(): String iso^ => "malformed header".clone()
 

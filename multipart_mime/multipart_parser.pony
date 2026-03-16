@@ -16,10 +16,10 @@ class ref MultipartParser
     """
     Create a parser for the given `boundary` string.
 
-    If the boundary is invalid (empty, >70 characters, or contains
-    characters outside the RFC 2046 allowed set), the parser enters
-    a failed state and will deliver `InvalidBoundary` on the first
-    `parse()` call.
+    If the boundary is invalid (empty, >70 characters, ends with a
+    space, or contains characters outside the RFC 2046 allowed set),
+    the parser enters a failed state and will deliver
+    `InvalidBoundary` on the first `parse()` or `finish()` call.
     """
     _impl = _MultipartParserImpl(notify', boundary, config')
 

@@ -2,6 +2,8 @@ use "../../multipart_mime"
 
 actor Main
   new create(env: Env) =>
+    // In real usage, extract the boundary from the Content-Type header
+    // (e.g. "multipart/form-data; boundary=formboundary123").
     let boundary = "formboundary123"
     let msg =
       "--formboundary123\r\n"

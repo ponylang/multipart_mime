@@ -1,6 +1,6 @@
 # multipart_mime
 
-RFC 2046 streaming multipart MIME parser for Pony.
+An RFC 2046 streaming multipart MIME parser for Pony.
 
 <!-- contributor-only -->
 ## Contributing with an AI assistant
@@ -24,33 +24,25 @@ When you start working on this project, load the `pony-skills` skill — it tell
 Read [CONTRIBUTING.md](CONTRIBUTING.md).
 <!-- /contributor-only -->
 
-## Building
+## Building and testing
 
 ```
-make          # build and run tests
-make test     # same as above
+make          # build + run tests
+make test     # same as make
 make examples # build all examples
 make clean    # clean build artifacts and corral deps
 ```
 
-Run a single test: `make test-one t="parser/callback ordering"`
+Run a single test by name: `make test-one t="parser/single part"`.
 
 ## Architecture
 
-Single package `multipart_mime` with a trait-based state machine:
+`MultipartParser` is a thin public wrapper over the state machine in `_MultipartParserImpl`. The impl exposes its state fields publicly on purpose, so the state classes can reach them — don't privatize them to tidy up, or the state machine breaks; the wrapper is what keeps them off the library's public surface.
 
-- `MultipartParser` — public API wrapper, delegates to `_MultipartParserImpl`
-- `_MultipartParserImpl` — internal parser with public fields (accessed by state classes in the same package; hidden from library users by the wrapper)
-- `_ParserState` — interface for state classes: `_ExpectPreamble`, `_ExpectPartHeaders`, `_ExpectPartBody`, `_Epilogue`, `_Failed`
-- `_ParseResult` — union type returned by state transitions: `_ParseContinue | _ParseNeedMore | MultipartParseError`
-
-The `_failed` flag on `_MultipartParserImpl` has dual meaning: "an error has been delivered" and "stop all processing." The initial `_Failed` state (invalid boundary) starts with `_failed = false` — the error is delivered on the first `parse()` or `finish()` call.
+`_failed` means "stop all processing," and on the error path it also guards against delivering the error twice. The subtlety: an invalid boundary sets the state to `_Failed` but leaves `_failed = false`, so the error is delivered on the first `parse()` or `finish()` call rather than at construction — don't move that delivery into the constructor.
 
 ## Conventions
 
-- `_Unreachable` primitive for impossible code paths (mort pattern with project issues URL)
-- `PartHeaders.create` takes lowercased name/value pairs — the parser lowercases automatically, but the public constructor lets downstream code build test fixtures
-- Error types are a closed union of primitives (`MultipartParseError`), not a marker trait
-- All test classes have `\nodoc\` on the declaration line
-- Tests in `_test*.pony` files; property-based tests in `_test_parser_props.pony`
-- `CollectParts` tests are colocated with `FormData` tests in `_test_form_data.pony`
+- `PartHeaders.create` expects already-lowercased header *names* (values are stored verbatim). The parser lowercases names for you, but a hand-built test fixture must.
+- `_Unreachable()` for impossible code paths.
+- `\nodoc\` on test classes.

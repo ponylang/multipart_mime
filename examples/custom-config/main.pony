@@ -18,18 +18,18 @@ actor Main
 
     // First part: fits within the 32-byte body limit
     let msg =
-      "--boundary123\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"small\"\r\n"
-        + "\r\n"
-        + "fits fine\r\n"
-        + "--boundary123\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"big\"\r\n"
-        + "\r\n"
-        + "this body is longer than thirty-two bytes"
-        + " and will be rejected\r\n"
-        + "--boundary123--"
+      "--boundary123\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"small\"\r\n" +
+        "\r\n" +
+        "fits fine\r\n" +
+        "--boundary123\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"big\"\r\n" +
+        "\r\n" +
+        "this body is longer than thirty-two bytes" +
+        " and will be rejected\r\n" +
+        "--boundary123--"
 
     parser
       .> parse(msg.array())

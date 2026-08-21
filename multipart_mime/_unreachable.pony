@@ -9,10 +9,10 @@ primitive _Unreachable
   fun apply(loc: SourceLoc = __loc): None =>
     @fprintf(
       @pony_os_stderr(),
-      ("Unreachable code reached at %s:%zu\n"
-        + "Please open an issue at "
-        + "https://github.com/ponylang/"
-        + "multipart_mime/issues\n").cstring(),
+      ("Unreachable code reached at %s:%zu\n" +
+        "Please open an issue at " +
+        "https://github.com/ponylang/" +
+        "multipart_mime/issues\n").cstring(),
       loc.file().cstring(),
       loc.line())
     @exit(1)

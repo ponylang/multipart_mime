@@ -27,8 +27,8 @@ actor Main
         message.substring(
           offset.isize(), end_pos.isize())
       out.print(
-        "[feed " + chunk.size().string()
-          + " bytes]")
+        "[feed " + chunk.size().string() +
+          " bytes]")
       parser.parse(chunk.array())
       offset = end_pos
     end
@@ -43,16 +43,16 @@ class ref _EventPrinter is MultipartNotify
 
   fun ref part_begin(headers: PartHeaders val) =>
     _out.print(
-      ">> part_begin ("
-        + headers.size().string()
-        + " headers)")
+      ">> part_begin (" +
+        headers.size().string() +
+        " headers)")
 
   fun ref body_chunk(data: Array[U8] val) =>
     let s = String.from_array(data)
     _out.print(
-      ">> body_chunk ("
-        + data.size().string()
-        + " bytes): " + s)
+      ">> body_chunk (" +
+        data.size().string() +
+        " bytes): " + s)
 
   fun ref part_end() =>
     _out.print(">> part_end")

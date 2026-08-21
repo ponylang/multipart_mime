@@ -30,16 +30,16 @@ class \nodoc\ _TestRoundtripProperty
       h.assert_eq[USize](
         expected.headers.size(),
         actual_hdrs.size(),
-        "header count mismatch for part "
-          + i.string())
+        "header count mismatch for part " +
+          i.string())
       var hi: USize = 0
       while hi < expected.headers.size() do
         let exp_name = expected.headers(hi)?._1
         let exp_val = expected.headers(hi)?._2
         var found = false
         for (ak, av) in actual_hdrs.values() do
-          if (ak == exp_name.lower())
-            and (av == exp_val)
+          if (ak == exp_name.lower()) and
+            (av == exp_val)
           then
             found = true
             break
@@ -47,25 +47,25 @@ class \nodoc\ _TestRoundtripProperty
         end
         h.assert_true(
           found,
-          "header " + exp_name + ": "
-            + exp_val
-            + " not found in part "
-            + i.string())
+          "header " + exp_name + ": " +
+            exp_val +
+            " not found in part " +
+            i.string())
         hi = hi + 1
       end
       h.assert_eq[USize](
         expected.body.size(),
         actual_body.size(),
-        "body size mismatch for part "
-          + i.string())
+        "body size mismatch for part " +
+          i.string())
       var j: USize = 0
       while j < expected.body.size() do
         h.assert_eq[U8](
           expected.body(j)?,
           actual_body(j)?,
-          "body mismatch at byte "
-            + j.string()
-            + " in part " + i.string())
+          "body mismatch at byte " +
+            j.string() +
+            " in part " + i.string())
         j = j + 1
       end
       i = i + 1
@@ -104,16 +104,16 @@ class \nodoc\ _TestChunkedRoundtripProperty
       h.assert_eq[USize](
         expected.headers.size(),
         actual_hdrs.size(),
-        "header count mismatch for part "
-          + i.string())
+        "header count mismatch for part " +
+          i.string())
       var hi: USize = 0
       while hi < expected.headers.size() do
         let exp_name = expected.headers(hi)?._1
         let exp_val = expected.headers(hi)?._2
         var found = false
         for (ak, av) in actual_hdrs.values() do
-          if (ak == exp_name.lower())
-            and (av == exp_val)
+          if (ak == exp_name.lower()) and
+            (av == exp_val)
           then
             found = true
             break
@@ -121,25 +121,25 @@ class \nodoc\ _TestChunkedRoundtripProperty
         end
         h.assert_true(
           found,
-          "header " + exp_name + ": "
-            + exp_val
-            + " not found in part "
-            + i.string())
+          "header " + exp_name + ": " +
+            exp_val +
+            " not found in part " +
+            i.string())
         hi = hi + 1
       end
       h.assert_eq[USize](
         expected.body.size(),
         actual_body.size(),
-        "body size mismatch for part "
-          + i.string())
+        "body size mismatch for part " +
+          i.string())
       var j: USize = 0
       while j < expected.body.size() do
         h.assert_eq[U8](
           expected.body(j)?,
           actual_body(j)?,
-          "body mismatch at byte "
-            + j.string()
-            + " in part " + i.string())
+          "body mismatch at byte " +
+            j.string() +
+            " in part " + i.string())
         j = j + 1
       end
       i = i + 1
@@ -213,9 +213,9 @@ class \nodoc\ _TestPreambleEpilogueIgnored
     ?
   =>
     let with_extras: String val =
-      sample.preamble + "\r\n"
-        + sample.msg.encoded
-        + "\r\n" + sample.epilogue
+      sample.preamble + "\r\n" +
+        sample.msg.encoded +
+        "\r\n" + sample.epilogue
     let collector: _PropCollector ref = _PropCollector
     let p =
       MultipartParser(collector, sample.msg.boundary)
@@ -231,21 +231,21 @@ class \nodoc\ _TestPreambleEpilogueIgnored
       h.assert_eq[USize](
         expected.body.size(),
         actual_body.size(),
-        "body size mismatch for part "
-          + i.string())
+        "body size mismatch for part " +
+          i.string())
       var j: USize = 0
       while j < expected.body.size() do
         try
           h.assert_eq[U8](
             expected.body(j)?,
             actual_body(j)?,
-            "body mismatch at byte "
-              + j.string()
-              + " in part " + i.string())
+            "body mismatch at byte " +
+              j.string() +
+              " in part " + i.string())
         else
           h.fail(
-            "body access error in part "
-              + i.string())
+            "body access error in part " +
+              i.string())
         end
         j = j + 1
       end
@@ -322,9 +322,9 @@ primitive \nodoc\ _MultipartMessageGen
           : _MultipartMessage val^
         =>
           let bchars =
-            "abcdefghijklmnopqrstuvwxyz"
-              + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-              + "0123456789'()+_,-./:=? "
+            "abcdefghijklmnopqrstuvwxyz" +
+              "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+              "0123456789'()+_,-./:=? "
           let blen = rnd.usize(1, 70)
           let boundary =
             recover val
@@ -384,13 +384,13 @@ primitive \nodoc\ _MultipartMessageGen
             while hi < num_hdrs do
               let hname =
                 recover val
-                  "X-Test-"
-                    + rnd.usize(0, 999).string()
+                  "X-Test-" +
+                    rnd.usize(0, 999).string()
                 end
               let hval =
                 recover val
-                  "value-"
-                    + rnd.usize(0, 999).string()
+                  "value-" +
+                    rnd.usize(0, 999).string()
                 end
               encoded.append(hname)
               encoded.append(": ")
@@ -414,9 +414,8 @@ primitive \nodoc\ _MultipartMessageGen
                 end,
                 boundary)
             encoded.append(body)
-            let frozen_hdrs
-              : Array[(String val, String val)] val
-              = consume hdrs
+            let frozen_hdrs: Array[(String val, String val)] val =
+              consume hdrs
             parts.push(
               _PartData(frozen_hdrs, body))
             pi = pi + 1
@@ -427,9 +426,8 @@ primitive \nodoc\ _MultipartMessageGen
           encoded.append("--")
           encoded.append(boundary)
           encoded.append("--")
-          let frozen_parts
-            : Array[_PartData val] val
-            = consume parts
+          let frozen_parts: Array[_PartData val] val =
+            consume parts
           _MultipartMessage(
             boundary,
             frozen_parts,

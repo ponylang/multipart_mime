@@ -7,22 +7,22 @@ actor Main
 
     // A message with several fields. We only care about "token".
     let msg =
-      "--boundary456\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"username\"\r\n"
-        + "\r\n"
-        + "alice\r\n"
-        + "--boundary456\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"token\"\r\n"
-        + "\r\n"
-        + "abc-secret-xyz\r\n"
-        + "--boundary456\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"bio\"\r\n"
-        + "\r\n"
-        + "This part is never reached.\r\n"
-        + "--boundary456--"
+      "--boundary456\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"username\"\r\n" +
+        "\r\n" +
+        "alice\r\n" +
+        "--boundary456\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"token\"\r\n" +
+        "\r\n" +
+        "abc-secret-xyz\r\n" +
+        "--boundary456\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"bio\"\r\n" +
+        "\r\n" +
+        "This part is never reached.\r\n" +
+        "--boundary456--"
 
     let notify = _TokenFinder(out)
     let parser =

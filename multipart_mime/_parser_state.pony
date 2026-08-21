@@ -36,8 +36,8 @@ primitive _BufferScan
       end
     while i < limit do
       try
-        if (reader.peek_u8(i)? == '\r')
-          and (reader.peek_u8(i + 1)? == '\n')
+        if (reader.peek_u8(i)? == '\r') and
+          (reader.peek_u8(i + 1)? == '\n')
         then
           return i
         end
@@ -187,8 +187,8 @@ class ref _ExpectPreamble is _ParserState
 
     try
       // Check for close delimiter: "--boundary--"
-      if (p.reader.peek_u8(after_boundary)? == '-')
-        and (p.reader.peek_u8(after_boundary + 1)? == '-')
+      if (p.reader.peek_u8(after_boundary)? == '-') and
+        (p.reader.peek_u8(after_boundary + 1)? == '-')
       then
         p.state = _Epilogue
         try p.reader.skip(after_boundary + 2)?
@@ -227,8 +227,8 @@ class ref _ExpectPreamble is _ParserState
         return _ParseNeedMore
       end
 
-      if (p.reader.peek_u8(pad_pos)? == '\r')
-        and (p.reader.peek_u8(pad_pos + 1)? == '\n')
+      if (p.reader.peek_u8(pad_pos)? == '\r') and
+        (p.reader.peek_u8(pad_pos + 1)? == '\n')
       then
         try p.reader.skip(pad_pos + 2)?
         else _Unreachable()
@@ -497,8 +497,8 @@ class ref _ExpectPartBody is _ParserState
 
           try
             // Check for close delimiter
-            if (p.reader.peek_u8(after_boundary)? == '-')
-              and (p.reader.peek_u8(
+            if (p.reader.peek_u8(after_boundary)? == '-') and
+              (p.reader.peek_u8(
                 after_boundary + 1)? == '-')
             then
               p.in_part = false
@@ -519,8 +519,8 @@ class ref _ExpectPartBody is _ParserState
 
             // Skip transport padding, capped to prevent DoS
             var pad_pos = after_boundary
-            while (pad_pos < p.reader.size())
-              and _BufferScan.is_lwsp(
+            while (pad_pos < p.reader.size()) and
+              _BufferScan.is_lwsp(
                 p.reader.peek_u8(pad_pos)?)
             do
               if (pad_pos - after_boundary) >=
@@ -541,8 +541,8 @@ class ref _ExpectPartBody is _ParserState
               return _ParseNeedMore
             end
 
-            if (p.reader.peek_u8(pad_pos)? == '\r')
-              and (p.reader.peek_u8(pad_pos + 1)? == '\n')
+            if (p.reader.peek_u8(pad_pos)? == '\r') and
+              (p.reader.peek_u8(pad_pos + 1)? == '\n')
             then
               p.in_part = false
               p.notify.part_end()

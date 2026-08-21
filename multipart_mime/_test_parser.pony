@@ -17,9 +17,9 @@ class \nodoc\ _TestSinglePart is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"
-          + "\r\nhello\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n" +
+          "\r\nhello\r\n--boundary--"))
     h.assert_true(
       n.finished_called,
       "finished should be called")
@@ -36,10 +36,10 @@ class \nodoc\ _TestMultipleParts is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\npart1"
-          + "\r\n--boundary\r\n\r\npart2"
-          + "\r\n--boundary\r\n\r\npart3"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\npart1" +
+          "\r\n--boundary\r\n\r\npart2" +
+          "\r\n--boundary\r\n\r\npart3" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
     h.assert_eq[USize](3, n.parts_received)
@@ -57,9 +57,9 @@ class \nodoc\ _TestEmptyBody is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -72,8 +72,8 @@ class \nodoc\ _TestNoHeaders is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
     h.assert_eq[USize](0, n.last_header_count)
@@ -91,9 +91,9 @@ class \nodoc\ _TestPreambleDiscarded is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "This is preamble text.\r\n"
-          + "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "This is preamble text.\r\n" +
+          "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -106,9 +106,9 @@ class \nodoc\ _TestEpilogueIgnored is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"
-          + "\r\nThis is epilogue."))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--" +
+          "\r\nThis is epilogue."))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -121,8 +121,8 @@ class \nodoc\ _TestTransportPadding is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary  \t \r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary  \t \r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -138,9 +138,9 @@ class \nodoc\ _TestIncrementalFeeding is UnitTest
         expect_bodies' = [expected_body])
     let p = MultipartParser(n, "boundary")
     let msg =
-      "--boundary\r\n"
-        + "Content-Type: text/plain\r\n"
-        + "\r\nhello\r\n--boundary--"
+      "--boundary\r\n" +
+        "Content-Type: text/plain\r\n" +
+        "\r\nhello\r\n--boundary--"
     // Feed one byte at a time
     for byte in msg.values() do
       p.parse(recover val [byte] end)
@@ -162,8 +162,8 @@ class \nodoc\ _TestPartialBoundaryInBody is UnitTest
     let p = MultipartParser(n, "abc")
     p.parse(
       _ToVal(
-        "--abc\r\n\r\nsome\r\n--abtext"
-          + "\r\n--abc--"))
+        "--abc\r\n\r\nsome\r\n--abtext" +
+          "\r\n--abc--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -222,9 +222,9 @@ class \nodoc\ _TestMalformedHeaderNoColon is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "this is not a header\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "this is not a header\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_true(
       n.error_called, "error should be delivered")
 
@@ -239,10 +239,10 @@ class \nodoc\ _TestMalformedHeaderObsFold is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"
-          + "  continuation\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n" +
+          "  continuation\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_true(
       n.error_called, "error should be delivered")
 
@@ -257,8 +257,8 @@ class \nodoc\ _TestUnexpectedEndInHeaders is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n"))
     p.finish()
     h.assert_true(
       n.error_called, "error should be delivered")
@@ -310,10 +310,10 @@ class \nodoc\ _TestHeadersTooLarge is UnitTest
       MultipartParser(n, "boundary", small_config)
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "X-Very-Long-Header-Name:"
-          + " very long value here\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "X-Very-Long-Header-Name:" +
+          " very long value here\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_true(
       n.error_called, "error should be delivered")
 
@@ -331,8 +331,8 @@ class \nodoc\ _TestPartBodyTooLarge is UnitTest
       MultipartParser(n, "boundary", small_config)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\n0123456789"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\n0123456789" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.error_called, "error should be delivered")
 
@@ -349,9 +349,9 @@ class \nodoc\ _TestTooManyParts is UnitTest
       MultipartParser(n, "boundary", small_config)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\np1"
-          + "\r\n--boundary\r\n\r\np2"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\np1" +
+          "\r\n--boundary\r\n\r\np2" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.error_called, "error should be delivered")
 
@@ -365,8 +365,8 @@ class \nodoc\ _TestStop is UnitTest
     p.stop()
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_eq[USize](0, n.parts_received)
 
 class \nodoc\ _TestEmptyMultipart is UnitTest
@@ -427,12 +427,12 @@ class \nodoc\ _TestMultipleHeaders is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"
-          + "Content-Disposition:"
-          + " form-data; name=\"field\"\r\n"
-          + "X-Custom: value\r\n"
-          + "\r\nbody\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n" +
+          "Content-Disposition:" +
+          " form-data; name=\"field\"\r\n" +
+          "X-Custom: value\r\n" +
+          "\r\nbody\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
     h.assert_eq[USize](3, n.last_header_count)
@@ -454,8 +454,8 @@ class \nodoc\ _TestCrlfOwnership is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -469,8 +469,8 @@ class \nodoc\ _TestFinishAfterComplete is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     p.finish() // Should be a no-op
     h.assert_true(n.finished_called)
     h.assert_false(
@@ -487,10 +487,10 @@ class \nodoc\ _TestTransportPaddingBetweenParts is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\npart1"
-          + "\r\n--boundary  \t\r\n"
-          + "\r\npart2"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\npart1" +
+          "\r\n--boundary  \t\r\n" +
+          "\r\npart2" +
+          "\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
     h.assert_eq[USize](2, n.parts_received)
@@ -509,8 +509,8 @@ class \nodoc\ _TestBodyAtExactLimit is UnitTest
       MultipartParser(n, "boundary", config)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\n01234"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\n01234" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.finished_called,
       "5-byte body at 5-byte limit should succeed")
@@ -576,8 +576,8 @@ class \nodoc\ _TestStopMidPart is UnitTest
     n.set_parser(p)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nsome body data"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nsome body data" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.begin_called,
       "part_begin should be called")
@@ -602,8 +602,8 @@ class \nodoc\ _TestStopFromPartBegin is UnitTest
     n.set_parser(p)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nsome body data"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nsome body data" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.begin_called,
       "part_begin should be called")
@@ -630,9 +630,9 @@ class \nodoc\ _TestStopFromPartEnd is UnitTest
     n.set_parser(p)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\npart1"
-          + "\r\n--boundary\r\n\r\npart2"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\npart1" +
+          "\r\n--boundary\r\n\r\npart2" +
+          "\r\n--boundary--"))
     h.assert_eq[USize](
       1,
       n.parts_begun,
@@ -669,7 +669,8 @@ class \nodoc\ _TestMalformedBoundaryLine is UnitTest
           a.push(' ')
           i = i + 1
         end
-        a.push('')
+        a.push('
+')
         a.push('
 ')
         for c in "
@@ -701,8 +702,8 @@ class \nodoc\ _TestPreambleTooLarge is UnitTest
     // a boundary, and the limit fires.
     p.parse(
       _ToVal(
-        "This preamble is way too long"
-          + " for the limit."))
+        "This preamble is way too long" +
+          " for the limit."))
     h.assert_true(
       n.error_called,
       "error should be delivered")
@@ -777,8 +778,8 @@ class \nodoc\ ref _CollectNotify is MultipartNotify
           _h.assert_eq[USize](
             expected.size(),
             _current_body.size(),
-            "body size mismatch for part "
-              + _body_index.string())
+            "body size mismatch for part " +
+              _body_index.string())
           let check_len =
             expected.size().min(
               _current_body.size())
@@ -787,14 +788,14 @@ class \nodoc\ ref _CollectNotify is MultipartNotify
             _h.assert_eq[U8](
               expected(i)?,
               _current_body(i)?,
-              "body byte mismatch at "
-                + i.string())
+              "body byte mismatch at " +
+                i.string())
             i = i + 1
           end
         else
           _h.fail(
-            "body comparison error for part "
-              + _body_index.string())
+            "body comparison error for part " +
+              _body_index.string())
         end
       end
     end
@@ -805,9 +806,9 @@ class \nodoc\ ref _CollectNotify is MultipartNotify
     _h.assert_eq[USize](
       _expect_parts,
       parts_received,
-      "expected " + _expect_parts.string()
-        + " parts, got "
-        + parts_received.string())
+      "expected " + _expect_parts.string() +
+        " parts, got " +
+        parts_received.string())
 
   fun ref parse_error(err: MultipartParseError) =>
     error_called = true
@@ -924,16 +925,16 @@ class \nodoc\ _TestParseAfterFinish is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     p.finish()
     h.assert_true(n.finished_called)
     // Reset tracking and parse more data
     let parts_before = n.parts_received
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nextra"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nextra" +
+          "\r\n--boundary--"))
     h.assert_eq[USize](
       parts_before,
       n.parts_received,
@@ -952,9 +953,9 @@ class \nodoc\ _TestParseAfterError is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "not a header\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "not a header\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_eq[USize](
       1,
       n.error_count,
@@ -962,8 +963,8 @@ class \nodoc\ _TestParseAfterError is UnitTest
     // Feed more data — should be ignored
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_eq[USize](
       1,
       n.error_count,
@@ -1012,9 +1013,9 @@ class \nodoc\ _TestStopFromParseError is UnitTest
     n.set_parser(p)
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "not a header\r\n"
-          + "\r\n\r\n--boundary--"))
+        "--boundary\r\n" +
+          "not a header\r\n" +
+          "\r\n\r\n--boundary--"))
     h.assert_true(
       n.error_called,
       "error should fire")
@@ -1030,8 +1031,8 @@ class \nodoc\ _TestStopDuringFinishBodyTooLarge
   callback, honoring the stop contract.
   """
   fun name(): String =>
-    "parser/stop from part_end during "
-      + "finish body-too-large"
+    "parser/stop from part_end during " +
+      "finish body-too-large"
 
   fun apply(h: TestHelper) =>
     let n = _StopOnPartEndNoError(h)
@@ -1062,8 +1063,8 @@ class \nodoc\ _TestStopDuringParseBodyTooLarge
   callback, honoring the stop contract.
   """
   fun name(): String =>
-    "parser/stop from part_end during "
-      + "parse body-too-large"
+    "parser/stop from part_end during " +
+      "parse body-too-large"
 
   fun apply(h: TestHelper) =>
     let n = _StopOnPartEndNoError(h)
@@ -1076,8 +1077,8 @@ class \nodoc\ _TestStopDuringParseBodyTooLarge
     // Body is 10 bytes — exceeds limit during parse()
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\n0123456789"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\n0123456789" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.end_called,
       "part_end should fire")
@@ -1148,8 +1149,8 @@ class \nodoc\ _TestValidBoundaryInternalSpace
     let p = MultipartParser(n, "ab cd")
     p.parse(
       _ToVal(
-        "--ab cd\r\n\r\nbody"
-          + "\r\n--ab cd--"))
+        "--ab cd\r\n\r\nbody" +
+          "\r\n--ab cd--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
 
@@ -1168,8 +1169,8 @@ class \nodoc\ _TestStopFromFinished is UnitTest
     n.set_parser(p)
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nbody"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nbody" +
+          "\r\n--boundary--"))
     h.assert_true(
       n.finished_called,
       "finished should fire")
@@ -1179,8 +1180,8 @@ class \nodoc\ _TestStopFromFinished is UnitTest
     // Parse more data — should be ignored
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nextra"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nextra" +
+          "\r\n--boundary--"))
     h.assert_eq[USize](
       1,
       n.parts_begun,
@@ -1200,10 +1201,10 @@ class \nodoc\ _TestHeaderEmptyValue is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "X-Empty:\r\n"
-          + "X-Whitespace:   \r\n"
-          + "\r\nbody\r\n--boundary--"))
+        "--boundary\r\n" +
+          "X-Empty:\r\n" +
+          "X-Whitespace:   \r\n" +
+          "\r\nbody\r\n--boundary--"))
     h.assert_true(n.finished_called)
     h.assert_false(n.error_called)
     h.assert_eq[USize](2, n.last_header_count)
@@ -1224,9 +1225,9 @@ class \nodoc\ _TestMalformedHeaderWhitespaceBeforeColon
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type : text/plain\r\n"
-          + "\r\nbody\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type : text/plain\r\n" +
+          "\r\nbody\r\n--boundary--"))
     h.assert_true(
       n.error_called,
       "error should be delivered for space before colon")
@@ -1323,8 +1324,8 @@ class \nodoc\ _TestHeadersTooLargePending is UnitTest
       _ToVal("--boundary\r\n"))
     p.parse(
       _ToVal(
-        "X-Very-Long-Header-Name-That"
-          + "-Exceeds-The-Limit"))
+        "X-Very-Long-Header-Name-That" +
+          "-Exceeds-The-Limit"))
     h.assert_true(
       n.error_called,
       "error should be delivered for pending bytes")
@@ -1420,12 +1421,12 @@ class \nodoc\ _TestCallbackOrdering is UnitTest
     let p = MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n"
-          + "Content-Type: text/plain\r\n"
-          + "\r\nfirst"
-          + "\r\n--boundary\r\n"
-          + "\r\nsecond"
-          + "\r\n--boundary--"))
+        "--boundary\r\n" +
+          "Content-Type: text/plain\r\n" +
+          "\r\nfirst" +
+          "\r\n--boundary\r\n" +
+          "\r\nsecond" +
+          "\r\n--boundary--"))
     let expected: Array[String val] val =
       [ "part_begin"
         "body_chunk"
@@ -1447,8 +1448,8 @@ class \nodoc\ _TestCallbackOrdering is UnitTest
           "event " + i.string() + " mismatch")
       else
         h.fail(
-          "event comparison error at "
-            + i.string())
+          "event comparison error at " +
+            i.string())
       end
       i = i + 1
     end

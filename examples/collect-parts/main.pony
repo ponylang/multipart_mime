@@ -6,17 +6,17 @@ actor Main
     // (e.g. "multipart/form-data; boundary=formboundary123").
     let boundary = "formboundary123"
     let msg =
-      "--formboundary123\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"greeting\"\r\n"
-        + "\r\n"
-        + "Hello, world!\r\n"
-        + "--formboundary123\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"count\"\r\n"
-        + "\r\n"
-        + "42\r\n"
-        + "--formboundary123--"
+      "--formboundary123\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"greeting\"\r\n" +
+        "\r\n" +
+        "Hello, world!\r\n" +
+        "--formboundary123\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"count\"\r\n" +
+        "\r\n" +
+        "42\r\n" +
+        "--formboundary123--"
     let out = env.out
     let notify =
       CollectParts(
@@ -26,8 +26,8 @@ actor Main
         for part in parts.values() do
           match FormData.field_name(part.headers)
           | let name: String =>
-            out.print("  " + name + " = "
-              + String.from_array(part.body))
+            out.print("  " + name + " = " +
+              String.from_array(part.body))
           end
         end
       },

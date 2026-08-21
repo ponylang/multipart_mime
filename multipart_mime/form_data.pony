@@ -146,8 +146,8 @@ primitive FormData
       if in_quotes then
         if ch == '"' then
           in_quotes = false
-        elseif (ch == '\\')
-          and ((i + 1) < s.size())
+        elseif (ch == '\\') and
+          ((i + 1) < s.size())
         then
           i = i + 1 // skip escaped char
         end

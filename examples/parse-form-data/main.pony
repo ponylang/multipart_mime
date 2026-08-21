@@ -7,21 +7,21 @@ actor Main
 
     // Build a sample multipart/form-data message
     let msg =
-      "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"username\"\r\n"
-        + "\r\n"
-        + "jane_doe\r\n"
-        + "------WebKitFormBoundary7MA4YWxkTrZu0gW"
-        + "\r\n"
-        + "Content-Disposition:"
-        + " form-data; name=\"avatar\""
-        + "; filename=\"photo.png\"\r\n"
-        + "Content-Type: image/png\r\n"
-        + "\r\n"
-        + "<binary image data>\r\n"
-        + "------WebKitFormBoundary7MA4YWxkTrZu0gW"
-        + "--"
+      "------WebKitFormBoundary7MA4YWxkTrZu0gW\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"username\"\r\n" +
+        "\r\n" +
+        "jane_doe\r\n" +
+        "------WebKitFormBoundary7MA4YWxkTrZu0gW" +
+        "\r\n" +
+        "Content-Disposition:" +
+        " form-data; name=\"avatar\"" +
+        "; filename=\"photo.png\"\r\n" +
+        "Content-Type: image/png\r\n" +
+        "\r\n" +
+        "<binary image data>\r\n" +
+        "------WebKitFormBoundary7MA4YWxkTrZu0gW" +
+        "--"
     let out = env.out
     let notify = _FormDataPrinter(out)
     let parser =
@@ -57,8 +57,8 @@ class ref _FormDataPrinter is MultipartNotify
   fun ref body_chunk(data: Array[U8] val) =>
     let s = String.from_array(data)
     _out.print(
-      "  Body (" + data.size().string()
-        + " bytes): " + s)
+      "  Body (" + data.size().string() +
+        " bytes): " + s)
 
   fun ref finished() =>
     _out.print("Parse complete.")

@@ -23,8 +23,8 @@ class \nodoc\ _TestFormDataFileName is UnitTest
       PartHeaders(
         recover val
           [ ("content-disposition"
-            , "form-data; name=\"file\""
-              + "; filename=\"photo.jpg\"") ]
+            , "form-data; name=\"file\"" +
+              "; filename=\"photo.jpg\"") ]
         end)
     match \exhaustive\ FormData.file_name(headers)
     | let s: String =>
@@ -57,8 +57,8 @@ class \nodoc\ _TestFormDataQuotedEscape is UnitTest
       PartHeaders(
         recover val
           [ ("content-disposition"
-            , "form-data; name=\"field\""
-              + "; filename=\"file\\\"name.txt\"") ]
+            , "form-data; name=\"field\"" +
+              "; filename=\"file\\\"name.txt\"") ]
         end)
     match \exhaustive\ FormData.file_name(headers)
     | let s: String =>
@@ -175,9 +175,9 @@ class \nodoc\ _TestCollectPartsBasic is UnitTest
       MultipartParser(n, "boundary")
     p.parse(
       _ToVal(
-        "--boundary\r\n\r\nabcd"
-          + "\r\n--boundary\r\n\r\nef"
-          + "\r\n--boundary--"))
+        "--boundary\r\n\r\nabcd" +
+          "\r\n--boundary\r\n\r\nef" +
+          "\r\n--boundary--"))
 
 class \nodoc\ _TestFormDataCaseInsensitiveParam
   is UnitTest
@@ -239,8 +239,8 @@ class \nodoc\ _TestFormDataSemicolonInQuotes
       PartHeaders(
         recover val
           [ ("content-disposition"
-            , "form-data; name=\"a;b\""
-              + "; filename=\"file.txt\"") ]
+            , "form-data; name=\"a;b\"" +
+              "; filename=\"file.txt\"") ]
         end)
     match \exhaustive\ FormData.field_name(headers)
     | let s: String =>
@@ -421,9 +421,9 @@ class \nodoc\ _TestCollectPartsHeaders is UnitTest
     MultipartParser(n, "boundary")
       .> parse(
         _ToVal(
-          "--boundary\r\n"
-            + "Content-Type: text/plain\r\n"
-            + "Content-Disposition:"
-            + " form-data; name=\"f\"\r\n"
-            + "\r\ndata"
-            + "\r\n--boundary--"))
+          "--boundary\r\n" +
+            "Content-Type: text/plain\r\n" +
+            "Content-Disposition:" +
+            " form-data; name=\"f\"\r\n" +
+            "\r\ndata" +
+            "\r\n--boundary--"))

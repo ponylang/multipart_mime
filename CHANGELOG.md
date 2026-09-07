@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file. This projec
 
 ### Changed
 
+- Update to work with ponyc 0.71.0 ([PR #31](https://github.com/ponylang/multipart_mime/pull/31))
 
 ## [0.1.0] - 2026-03-16
 

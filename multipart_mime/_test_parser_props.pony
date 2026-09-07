@@ -319,13 +319,13 @@ primitive \nodoc\ _MultipartMessageGen
       object is GenObj[_MultipartMessage val]
         fun generate(
           rnd: Randomness)
-          : _MultipartMessage val^
+          : _MultipartMessage val^ ?
         =>
           let bchars =
             "abcdefghijklmnopqrstuvwxyz" +
               "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
               "0123456789'()+_,-./:=? "
-          let blen = rnd.usize(1, 70)
+          let blen = rnd.usize(1, 70)?
           let boundary =
             recover val
               let s = String(blen)
@@ -336,7 +336,7 @@ primitive \nodoc\ _MultipartMessageGen
                     bchars(
                       rnd.usize(
                         0,
-                        bchars.size() - 1))?)
+                        bchars.size() - 1)?)?)
                 else
                   s.push('x')
                 end
@@ -349,7 +349,7 @@ primitive \nodoc\ _MultipartMessageGen
               end
               s
             end
-          let num_parts = rnd.usize(0, 4)
+          let num_parts = rnd.usize(0, 4)?
           let parts =
             recover iso
               Array[_PartData val](num_parts)
@@ -364,9 +364,9 @@ primitive \nodoc\ _MultipartMessageGen
             encoded.append(boundary)
             // Random transport padding (LWSP before CRLF)
             var pk: USize = 0
-            let pn = rnd.usize(0, 5)
+            let pn = rnd.usize(0, 5)?
             while pk < pn do
-              if rnd.bool() then
+              if rnd.bool()? then
                 encoded.push(' ')
               else
                 encoded.push('\t')
@@ -374,7 +374,7 @@ primitive \nodoc\ _MultipartMessageGen
               pk = pk + 1
             end
             encoded.append("\r\n")
-            let num_hdrs = rnd.usize(0, 2)
+            let num_hdrs = rnd.usize(0, 2)?
             let hdrs =
               recover iso
                 Array[(String val, String val)](
@@ -385,12 +385,12 @@ primitive \nodoc\ _MultipartMessageGen
               let hname =
                 recover val
                   "X-Test-" +
-                    rnd.usize(0, 999).string()
+                    rnd.usize(0, 999)?.string()
                 end
               let hval =
                 recover val
                   "value-" +
-                    rnd.usize(0, 999).string()
+                    rnd.usize(0, 999)?.string()
                 end
               encoded.append(hname)
               encoded.append(": ")
@@ -400,14 +400,14 @@ primitive \nodoc\ _MultipartMessageGen
               hi = hi + 1
             end
             encoded.append("\r\n")
-            let body_len = rnd.usize(0, 300)
+            let body_len = rnd.usize(0, 300)?
             let body =
               _BodyScrub.scrub(
                 recover val
                   let s = String(body_len)
                   var bi: USize = 0
                   while bi < body_len do
-                    s.push(rnd.u8(0, 255))
+                    s.push(rnd.u8(0, 255)?)
                     bi = bi + 1
                   end
                   s
@@ -491,36 +491,23 @@ primitive \nodoc\ _ChunkedMessageGen
       object is GenObj[_ChunkedMessage val]
         fun generate(
           rnd: Randomness)
-          : _ChunkedMessage val^
+          : _ChunkedMessage val^ ?
         =>
           let msg =
-            try
-              _MultipartMessageGen()
-                .generate_value(rnd)?
-            else
-              return _ChunkedMessage(
-                _MultipartMessage(
-                  "x",
-                  recover val
-                    Array[_PartData val]
-                  end,
-                  ""),
-                recover val
-                  Array[String val]
-                end)
-            end
+            _MultipartMessageGen()
+              .generate(rnd)?
           let encoded = msg.encoded
           if encoded.size() == 0 then
             return _ChunkedMessage(
               msg,
               recover val [encoded] end)
           end
-          let num_splits = rnd.usize(1, 8)
+          let num_splits = rnd.usize(1, 8)?
           let splits = Array[USize](num_splits)
           var si: USize = 0
           while si < num_splits do
             splits.push(
-              rnd.usize(0, encoded.size() - 1))
+              rnd.usize(0, encoded.size() - 1)?)
             si = si + 1
           end
           var i: USize = 1
@@ -643,41 +630,29 @@ primitive \nodoc\ _MessageWithExtrasGen
       object is GenObj[_MessageWithExtras val]
         fun generate(
           rnd: Randomness)
-          : _MessageWithExtras val^
+          : _MessageWithExtras val^ ?
         =>
           let msg =
-            try
-              _MultipartMessageGen()
-                .generate_value(rnd)?
-            else
-              return _MessageWithExtras(
-                _MultipartMessage(
-                  "x",
-                  recover val
-                    Array[_PartData val]
-                  end,
-                  ""),
-                "",
-                "")
-            end
-          let pre_len = rnd.usize(0, 100)
+            _MultipartMessageGen()
+              .generate(rnd)?
+          let pre_len = rnd.usize(0, 100)?
           let preamble =
             recover val
               let s = String(pre_len)
               var i: USize = 0
               while i < pre_len do
-                s.push(rnd.u8(32, 126))
+                s.push(rnd.u8(32, 126)?)
                 i = i + 1
               end
               s
             end
-          let epi_len = rnd.usize(0, 100)
+          let epi_len = rnd.usize(0, 100)?
           let epilogue =
             recover val
               let s = String(epi_len)
               var i: USize = 0
               while i < epi_len do
-                s.push(rnd.u8(32, 126))
+                s.push(rnd.u8(32, 126)?)
                 i = i + 1
               end
               s
@@ -703,27 +678,16 @@ primitive \nodoc\ _TruncatedMessageGen
       object is GenObj[_TruncatedMessage val]
         fun generate(
           rnd: Randomness)
-          : _TruncatedMessage val^
+          : _TruncatedMessage val^ ?
         =>
           let msg =
-            try
-              _MultipartMessageGen()
-                .generate_value(rnd)?
-            else
-              return _TruncatedMessage(
-                _MultipartMessage(
-                  "x",
-                  recover val
-                    Array[_PartData val]
-                  end,
-                  ""),
-                "")
-            end
+            _MultipartMessageGen()
+              .generate(rnd)?
           if msg.encoded.size() < 2 then
             return _TruncatedMessage(msg, "")
           end
           let cut =
-            rnd.usize(1, msg.encoded.size() - 1)
+            rnd.usize(1, msg.encoded.size() - 1)?
           let truncated: String val =
             msg.encoded.substring(
               0, cut.isize())

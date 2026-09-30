@@ -1,5 +1,4 @@
 use "pony_test"
-use "pony_check"
 
 actor \nodoc\ Main is TestList
   new create(env: Env) =>
@@ -93,15 +92,9 @@ actor \nodoc\ Main is TestList
     test(_TestCollectPartsHeaders)
 
     // Property-based tests
-    test(Property1UnitTest[_MultipartMessage val](
-      _TestRoundtripProperty))
-    test(Property1UnitTest[_ChunkedMessage val](
-      _TestChunkedRoundtripProperty))
-    test(Property1UnitTest[_MultipartMessage val](
-      _TestBoundaryNeverInBody))
-    test(Property1UnitTest[_MultipartMessage val](
-      _TestTruncationDetected))
-    test(Property1UnitTest[_MessageWithExtras val](
-      _TestPreambleEpilogueIgnored))
-    test(Property1UnitTest[_TruncatedMessage val](
-      _TestInvalidInputProperty))
+    test.property(_TestRoundtripProperty)
+    test.property(_TestChunkedRoundtripProperty)
+    test.property(_TestBoundaryNeverInBody)
+    test.property(_TestTruncationDetected)
+    test.property(_TestPreambleEpilogueIgnored)
+    test.property(_TestInvalidInputProperty)

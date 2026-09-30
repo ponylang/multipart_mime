@@ -1,8 +1,7 @@
 use "pony_test"
-use "pony_check"
 
 class \nodoc\ _TestRoundtripProperty
-  is Property1[_MultipartMessage val]
+  is Property[_MultipartMessage val]
   fun name(): String => "parser/property: roundtrip"
 
   fun gen(): Generator[_MultipartMessage val] =>
@@ -72,7 +71,7 @@ class \nodoc\ _TestRoundtripProperty
     end
 
 class \nodoc\ _TestChunkedRoundtripProperty
-  is Property1[_ChunkedMessage val]
+  is Property[_ChunkedMessage val]
   fun name(): String =>
     "parser/property: chunked roundtrip"
 
@@ -146,7 +145,7 @@ class \nodoc\ _TestChunkedRoundtripProperty
     end
 
 class \nodoc\ _TestBoundaryNeverInBody
-  is Property1[_MultipartMessage val]
+  is Property[_MultipartMessage val]
   fun name(): String =>
     "parser/property: boundary never in body"
 
@@ -167,7 +166,7 @@ class \nodoc\ _TestBoundaryNeverInBody
       "boundary should never appear in body chunks")
 
 class \nodoc\ _TestTruncationDetected
-  is Property1[_MultipartMessage val]
+  is Property[_MultipartMessage val]
   fun name(): String =>
     "parser/property: truncation detected"
 
@@ -200,7 +199,7 @@ class \nodoc\ _TestTruncationDetected
       collector.error_msg)
 
 class \nodoc\ _TestPreambleEpilogueIgnored
-  is Property1[_MessageWithExtras val]
+  is Property[_MessageWithExtras val]
   fun name(): String =>
     "parser/property: preamble and epilogue ignored"
 
@@ -253,7 +252,7 @@ class \nodoc\ _TestPreambleEpilogueIgnored
     end
 
 class \nodoc\ _TestInvalidInputProperty
-  is Property1[_TruncatedMessage val]
+  is Property[_TruncatedMessage val]
   fun name(): String =>
     "parser/property: invalid input"
 
@@ -319,13 +318,13 @@ primitive \nodoc\ _MultipartMessageGen
       object is GenObj[_MultipartMessage val]
         fun generate(
           rnd: Randomness)
-          : _MultipartMessage val^ ?
+          : _MultipartMessage val^
         =>
           let bchars =
             "abcdefghijklmnopqrstuvwxyz" +
               "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
               "0123456789'()+_,-./:=? "
-          let blen = rnd.usize(1, 70)?
+          let blen = rnd.usize(1, 70)
           let boundary =
             recover val
               let s = String(blen)
@@ -336,7 +335,7 @@ primitive \nodoc\ _MultipartMessageGen
                     bchars(
                       rnd.usize(
                         0,
-                        bchars.size() - 1)?)?)
+                        bchars.size() - 1))?)
                 else
                   s.push('x')
                 end
@@ -349,7 +348,7 @@ primitive \nodoc\ _MultipartMessageGen
               end
               s
             end
-          let num_parts = rnd.usize(0, 4)?
+          let num_parts = rnd.usize(0, 4)
           let parts =
             recover iso
               Array[_PartData val](num_parts)
@@ -364,9 +363,9 @@ primitive \nodoc\ _MultipartMessageGen
             encoded.append(boundary)
             // Random transport padding (LWSP before CRLF)
             var pk: USize = 0
-            let pn = rnd.usize(0, 5)?
+            let pn = rnd.usize(0, 5)
             while pk < pn do
-              if rnd.bool()? then
+              if rnd.bool() then
                 encoded.push(' ')
               else
                 encoded.push('\t')
@@ -374,7 +373,7 @@ primitive \nodoc\ _MultipartMessageGen
               pk = pk + 1
             end
             encoded.append("\r\n")
-            let num_hdrs = rnd.usize(0, 2)?
+            let num_hdrs = rnd.usize(0, 2)
             let hdrs =
               recover iso
                 Array[(String val, String val)](
@@ -385,12 +384,12 @@ primitive \nodoc\ _MultipartMessageGen
               let hname =
                 recover val
                   "X-Test-" +
-                    rnd.usize(0, 999)?.string()
+                    rnd.usize(0, 999).string()
                 end
               let hval =
                 recover val
                   "value-" +
-                    rnd.usize(0, 999)?.string()
+                    rnd.usize(0, 999).string()
                 end
               encoded.append(hname)
               encoded.append(": ")
@@ -400,14 +399,14 @@ primitive \nodoc\ _MultipartMessageGen
               hi = hi + 1
             end
             encoded.append("\r\n")
-            let body_len = rnd.usize(0, 300)?
+            let body_len = rnd.usize(0, 300)
             let body =
               _BodyScrub.scrub(
                 recover val
                   let s = String(body_len)
                   var bi: USize = 0
                   while bi < body_len do
-                    s.push(rnd.u8(0, 255)?)
+                    s.push(rnd.u8(0, 255))
                     bi = bi + 1
                   end
                   s
@@ -502,12 +501,12 @@ primitive \nodoc\ _ChunkedMessageGen
               msg,
               recover val [encoded] end)
           end
-          let num_splits = rnd.usize(1, 8)?
+          let num_splits = rnd.usize(1, 8)
           let splits = Array[USize](num_splits)
           var si: USize = 0
           while si < num_splits do
             splits.push(
-              rnd.usize(0, encoded.size() - 1)?)
+              rnd.usize(0, encoded.size() - 1))
             si = si + 1
           end
           var i: USize = 1
@@ -635,24 +634,24 @@ primitive \nodoc\ _MessageWithExtrasGen
           let msg =
             _MultipartMessageGen()
               .generate(rnd)?
-          let pre_len = rnd.usize(0, 100)?
+          let pre_len = rnd.usize(0, 100)
           let preamble =
             recover val
               let s = String(pre_len)
               var i: USize = 0
               while i < pre_len do
-                s.push(rnd.u8(32, 126)?)
+                s.push(rnd.u8(32, 126))
                 i = i + 1
               end
               s
             end
-          let epi_len = rnd.usize(0, 100)?
+          let epi_len = rnd.usize(0, 100)
           let epilogue =
             recover val
               let s = String(epi_len)
               var i: USize = 0
               while i < epi_len do
-                s.push(rnd.u8(32, 126)?)
+                s.push(rnd.u8(32, 126))
                 i = i + 1
               end
               s
@@ -687,7 +686,7 @@ primitive \nodoc\ _TruncatedMessageGen
             return _TruncatedMessage(msg, "")
           end
           let cut =
-            rnd.usize(1, msg.encoded.size() - 1)?
+            rnd.usize(1, msg.encoded.size() - 1)
           let truncated: String val =
             msg.encoded.substring(
               0, cut.isize())

@@ -8,7 +8,7 @@ multipart_mime is in development and has not yet been released.
 
 ## Installation
 
-* Requires ponyc 0.74.0 or later.
+* Requires ponyc 0.78.0 or later.
 * Install [corral](https://github.com/ponylang/corral)
 * `corral add github.com/ponylang/multipart_mime.git --version 0.3.0`
 * `corral fetch` to fetch your dependencies

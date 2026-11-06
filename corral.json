@@ -4,7 +4,7 @@
   ],
   "info": {
     "name": "multipart_mime",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Multipart MIME parsing for Pony",
     "homepage": "https://github.com/ponylang/multipart_mime",
     "license": "BSD-2-Clause",
